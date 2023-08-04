@@ -31,10 +31,3 @@ if st.sidebar.button('Visualizar'):
         sns.countplot(data=df, x=options[0])
     plt.xticks(rotation=90)
     st.pyplot()
-
-    # Display a line plot with the mean
-    st.header('Linha da Média')
-    plt.figure(figsize=(10,5))
-    df.groupby(options[0]).size().plot()
-    plt.axhline(df.groupby(options[0]).size().mean(), color='red', linestyle='--')
-    st.pyplot()
