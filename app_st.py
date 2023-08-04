@@ -1,31 +1,40 @@
 
-# Import necessary libraries
+import streamlit as st
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the data
-df_unified = pd.read_csv("PAE_unified_data.csv")
+df = pd.read_csv('PAE_unified_data.csv')
 
-# Get a summary of the DataFrame
-df_summary = df_unified.describe(include='all')
+# Sidebar
+st.sidebar.header('Parâmetros')
+options = st.sidebar.multiselect('Escolha as colunas para filtrar', df.columns)
 
-# Count the number of missing values in each column
-missing_values = df_unified.isna().sum()
+# Filters
+for option in options:
+    values = df[option].unique()
+    selected_values = st.sidebar.multiselect(f'Escolha os valores para {option}', values)
+    df = df[df[option].isin(selected_values)]
 
-# Count the number of unique values in each column
-unique_values = df_unified.nunique()
+# Hue parameter
+hue_option = st.sidebar.selectbox('Escolha o atributo para o hue (opcional)', ['Nenhum'] + df.columns.tolist())
 
-# Plot the distribution of each column
-for col in df_unified.columns:
-    if df_unified[col].dtype in ['int64', 'float64']:
-        plt.figure(figsize=(10, 5))
-        sns.histplot(data=df_unified, x=col, kde=True)
-        plt.title(f'Distribution of {col}')
-        plt.show()
+# Button
+if st.sidebar.button('Visualizar'):
+    # Display a bar plot
+    st.header('Gráfico de Barras')
+    plt.figure(figsize=(10,5))
+    if hue_option != 'Nenhum':
+        sns.countplot(data=df, x=options[0], hue=hue_option)
     else:
-        plt.figure(figsize=(10, 5))
-        sns.countplot(data=df_unified, y=col, order=df_unified[col].value_counts().index)
-        plt.title(f'Count of each category in {col}')
-        plt.show()
+        sns.countplot(data=df, x=options[0])
+    plt.xticks(rotation=90)
+    st.pyplot()
 
-df_summary, missing_values, unique_values
+    # Display a line plot with the mean
+    st.header('Linha da Média')
+    plt.figure(figsize=(10,5))
+    df.groupby(options[0]).size().plot()
+    plt.axhline(df.groupby(options[0]).size().mean(), color='red', linestyle='--')
+    st.pyplot()
