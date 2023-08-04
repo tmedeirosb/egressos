@@ -3,6 +3,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Load the data
+df_unified = pd.read_csv("PAE_unified_data.csv")
+
 # Get a summary of the DataFrame
 df_summary = df_unified.describe(include='all')
 
