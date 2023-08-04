@@ -26,8 +26,18 @@ if st.sidebar.button('Visualizar'):
     st.header('Gráfico de Barras')
     fig, ax = plt.subplots(figsize=(10,5))
     if hue_option != 'Nenhum':
-        sns.countplot(data=df, x=options[0], hue=hue_option, ax=ax)
+        plot = sns.countplot(data=df, x=options[0], hue=hue_option, ax=ax)
     else:
-        sns.countplot(data=df, x=options[0], ax=ax)
-    plt.xticks(rotation=90)
+        plot = sns.countplot(data=df, x=options[0], ax=ax)
+    plot.set_xticklabels(plot.get_xticklabels(), rotation=90)
+
+    # Add the values on top of each bar
+    for p in plot.patches:
+        plot.annotate(format(p.get_height(), '.0f'), 
+                      (p.get_x() + p.get_width() / 2., p.get_height()), 
+                      ha = 'center', 
+                      va = 'center', 
+                      xytext = (0, 10), 
+                      textcoords = 'offset points')
+
     st.pyplot(fig)
