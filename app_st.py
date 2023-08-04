@@ -24,10 +24,10 @@ hue_option = st.sidebar.selectbox('Escolha o atributo para o hue (opcional)', ['
 if st.sidebar.button('Visualizar'):
     # Display a bar plot
     st.header('Gráfico de Barras')
-    plt.figure(figsize=(10,5))
+    fig, ax = plt.subplots(figsize=(10,5))
     if hue_option != 'Nenhum':
-        sns.countplot(data=df, x=options[0], hue=hue_option)
+        sns.countplot(data=df, x=options[0], hue=hue_option, ax=ax)
     else:
-        sns.countplot(data=df, x=options[0])
+        sns.countplot(data=df, x=options[0], ax=ax)
     plt.xticks(rotation=90)
-    st.pyplot()
+    st.pyplot(fig)
